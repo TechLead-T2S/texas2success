@@ -74,7 +74,7 @@
             <p><strong>Email:</strong> info@texas2success.com</p>
             <p><strong>Phone:</strong> 469 708 3802</p>
         </div>
-        <form action="contact.php" method="POST" class="contact-form" style="background:#f8f8fa; padding:2rem; border-radius:10px;">
+        <form action="https://formsubmit.co/info@texas2success.com" method="POST" class="contact-form" style="background:#f8f8fa; padding:2rem; border-radius:10px;">
             <div class="form-group">
                 <label for="name">Name</label>
                 <input type="text" id="name" name="name" required>
@@ -87,8 +87,17 @@
                 <label for="message">Message</label>
                 <textarea id="message" name="message" rows="5" required></textarea>
             </div>
+            <input type="hidden" name="_subject" value="Website Contact">
+            <input type="hidden" name="_captcha" value="false">
+            <input type="hidden" name="_next" value="https://texas2success.com/contact.html?success=contact#contact">
+            <input type="hidden" name="_template" value="table">
             <button type="submit" class="btn btn-primary">Send Message</button>
         </form>
+        
+        <!-- Success message -->
+        <div id="contact-success" class="success-message" style="display: none; background: #d4edda; color: #155724; padding: 15px; border-radius: 5px; margin-top: 15px; border: 1px solid #c3e6cb;">
+            <strong>Thank you!</strong> We've received your message and will get back to you within 24 hours.
+        </div>
     </main>
     <!-- Footer (reuse from index.html) -->
     <footer class="footer" style="background:#0a2a5c; color:#fff; padding:60px 0 20px 0;">

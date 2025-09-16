@@ -37,6 +37,28 @@ document.addEventListener('click', (e) => {
     }
 });
 
+// Show success messages based on URL parameters
+document.addEventListener('DOMContentLoaded', function() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const success = urlParams.get('success');
+    
+    if (success === 'consultancy') {
+        const successDiv = document.getElementById('consultancy-success');
+        if (successDiv) {
+            successDiv.style.display = 'block';
+            // Scroll to the form
+            document.getElementById('consultancy-success').scrollIntoView({ behavior: 'smooth' });
+        }
+    } else if (success === 'contact') {
+        const successDiv = document.getElementById('contact-success');
+        if (successDiv) {
+            successDiv.style.display = 'block';
+            // Scroll to the form
+            document.getElementById('contact-success').scrollIntoView({ behavior: 'smooth' });
+        }
+    }
+});
+
 // Enhanced Dropdown functionality for Services menu
 document.addEventListener('DOMContentLoaded', function() {
     const dropdowns = document.querySelectorAll('.nav-dropdown');
