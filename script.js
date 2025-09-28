@@ -1,11 +1,55 @@
-// Mobile Navigation Toggle
-const hamburger = document.querySelector('.hamburger');
+// Navigation Toggle (Both Desktop and Mobile)
+const navToggle = document.querySelector('.nav-toggle');
 const navMenu = document.querySelector('.nav-menu');
+const navBackdrop = document.querySelector('.nav-backdrop');
+const isHomePage = document.body.classList.contains('homepage');
 
-if (hamburger) {
-    hamburger.addEventListener('click', () => {
-        hamburger.classList.toggle('active');
-        navMenu.classList.toggle('active');
+if (navToggle) {
+    navToggle.addEventListener('click', () => {
+        navToggle.classList.toggle('active');
+        
+        // Different behavior for desktop vs mobile
+        if (window.innerWidth > 900) {
+            // Desktop: slide-out menu from left with backdrop
+            if (navToggle.classList.contains('active')) {
+                if (isHomePage) {
+                    navMenu.style.display = 'flex';
+                }
+                navMenu.classList.add('hamburger-mode');
+                navMenu.classList.add('active');
+                navBackdrop.classList.add('active');
+            } else {
+                navMenu.classList.remove('hamburger-mode');
+                navMenu.classList.remove('active');
+                navBackdrop.classList.remove('active');
+                if (isHomePage) {
+                    setTimeout(() => {
+                        if (!navMenu.classList.contains('active')) {
+                            navMenu.style.display = 'none';
+                        }
+                    }, 300);
+                }
+            }
+        } else {
+            // Mobile: full-screen menu
+            if (navToggle.classList.contains('active')) {
+                if (isHomePage) {
+                    navMenu.style.display = 'flex';
+                }
+                navMenu.classList.remove('hamburger-mode');
+                navMenu.classList.add('active');
+            } else {
+                navMenu.classList.remove('active');
+                if (isHomePage) {
+                    setTimeout(() => {
+                        if (!navMenu.classList.contains('active')) {
+                            navMenu.style.display = 'none';
+                        }
+                    }, 300);
+                }
+            }
+            navBackdrop.classList.remove('active');
+        }
         
         // Prevent body scroll when menu is open
         if (navMenu.classList.contains('active')) {
@@ -16,26 +60,157 @@ if (hamburger) {
     });
 }
 
-// Close mobile menu when clicking on a link
+// Close menu when clicking on a link
 document.querySelectorAll('.nav-link').forEach(n => n.addEventListener('click', () => {
-    if (hamburger && window.innerWidth <= 900) {
-        hamburger.classList.remove('active');
+    if (navToggle) {
+        navToggle.classList.remove('active');
         navMenu.classList.remove('active');
+        navMenu.classList.remove('hamburger-mode');
+        navBackdrop.classList.remove('active');
         document.body.style.overflow = '';
+        if (isHomePage) {
+            setTimeout(() => {
+                navMenu.style.display = 'none';
+            }, 300);
+        }
     }
 }));
 
-// Close mobile menu when clicking outside
+// Close menu when clicking outside or on backdrop
 document.addEventListener('click', (e) => {
-    if (window.innerWidth <= 900 && 
-        !e.target.closest('.nav-menu') && 
-        !e.target.closest('.hamburger') && 
-        navMenu.classList.contains('active')) {
-        hamburger.classList.remove('active');
+    if ((!e.target.closest('.nav-menu') && 
+        !e.target.closest('.nav-toggle') && 
+        navMenu.classList.contains('active')) ||
+        e.target.classList.contains('nav-backdrop')) {
+        navToggle.classList.remove('active');
         navMenu.classList.remove('active');
+        navMenu.classList.remove('hamburger-mode');
+        navBackdrop.classList.remove('active');
         document.body.style.overflow = '';
+        if (isHomePage) {
+            setTimeout(() => {
+                navMenu.style.display = 'none';
+            }, 300);
+        }
     }
 });
+
+// Handle window resize to reset menu state
+window.addEventListener('resize', () => {
+    if (window.innerWidth > 900) {
+        // On desktop, ensure hamburger-mode is properly set when menu is active
+        if (navMenu.classList.contains('active')) {
+            navMenu.classList.add('hamburger-mode');
+            navBackdrop.classList.add('active');
+        }
+    } else {
+        // On mobile, remove hamburger-mode class and backdrop
+        navMenu.classList.remove('hamburger-mode');
+        navBackdrop.classList.remove('active');
+    }
+    
+    // If menu is not active and on home page, ensure it's hidden
+    if (!navMenu.classList.contains('active') && isHomePage) {
+        navMenu.style.display = 'none';
+    }
+});
+
+// Close menu when ESC key is pressed
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && navMenu.classList.contains('active')) {
+        navToggle.classList.remove('active');
+        navMenu.classList.remove('active');
+        navMenu.classList.remove('hamburger-mode');
+        navBackdrop.classList.remove('active');
+        document.body.style.overflow = '';
+        if (isHomePage) {
+            setTimeout(() => {
+                navMenu.style.display = 'none';
+            }, 300);
+        }
+    }
+});
+
+// Hover functionality for hamburger menu
+let hoverTimeout;
+
+if (navToggle) {
+    // Show menu on hover
+    navToggle.addEventListener('mouseenter', () => {
+        clearTimeout(hoverTimeout);
+        
+        // Only show on hover if menu is not already active from click
+        if (!navToggle.classList.contains('active')) {
+            // Hide hamburger icon immediately on hover
+            navToggle.classList.add('hover-active');
+            
+            if (window.innerWidth > 900) {
+                // Desktop: slide-out menu from left with backdrop
+                if (isHomePage) {
+                    navMenu.style.display = 'flex';
+                }
+                navMenu.classList.add('hamburger-mode');
+                navMenu.classList.add('active');
+                navMenu.classList.add('hover-active'); // Add class to distinguish hover vs click
+                navBackdrop.classList.add('active');
+            } else {
+                // Mobile: full-screen menu
+                if (isHomePage) {
+                    navMenu.style.display = 'flex';
+                }
+                navMenu.classList.remove('hamburger-mode');
+                navMenu.classList.add('active');
+                navMenu.classList.add('hover-active');
+            }
+        }
+    });
+
+    // Hide menu when mouse leaves both hamburger and menu area
+    navToggle.addEventListener('mouseleave', () => {
+        hoverTimeout = setTimeout(hideHoverMenu, 200); // Small delay to allow moving to menu
+    });
+}
+
+// Keep menu open when hovering over the menu itself
+if (navMenu) {
+    navMenu.addEventListener('mouseenter', () => {
+        clearTimeout(hoverTimeout);
+    });
+
+    navMenu.addEventListener('mouseleave', () => {
+        hoverTimeout = setTimeout(hideHoverMenu, 200);
+    });
+}
+
+// Keep menu open when hovering over backdrop
+if (navBackdrop) {
+    navBackdrop.addEventListener('mouseenter', () => {
+        clearTimeout(hoverTimeout);
+    });
+
+    navBackdrop.addEventListener('mouseleave', () => {
+        hoverTimeout = setTimeout(hideHoverMenu, 200);
+    });
+}
+
+function hideHoverMenu() {
+    // Only hide if menu was opened by hover (has hover-active class) and not by click
+    if (navMenu.classList.contains('hover-active') && !navToggle.classList.contains('active')) {
+        navMenu.classList.remove('active');
+        navMenu.classList.remove('hamburger-mode');
+        navMenu.classList.remove('hover-active');
+        navToggle.classList.remove('hover-active'); // Show hamburger icon again
+        navBackdrop.classList.remove('active');
+        
+        if (isHomePage) {
+            setTimeout(() => {
+                if (!navMenu.classList.contains('active')) {
+                    navMenu.style.display = 'none';
+                }
+            }, 300);
+        }
+    }
+}
 
 // Show success messages based on URL parameters
 document.addEventListener('DOMContentLoaded', function() {
