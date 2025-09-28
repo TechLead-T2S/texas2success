@@ -49,14 +49,62 @@ document.addEventListener('DOMContentLoaded', function() {
             // Scroll to the form
             document.getElementById('consultancy-success').scrollIntoView({ behavior: 'smooth' });
         }
-    } else if (success === 'contact') {
-        const successDiv = document.getElementById('contact-success');
+    } else if (success === 'contact' || success === 'true') {
+        // Handle both old and new contact form success
+        const successDiv = document.getElementById('contact-success') || document.getElementById('success-message');
+        const contactForm = document.querySelector('.modern-contact-form');
+        
         if (successDiv) {
             successDiv.style.display = 'block';
-            // Scroll to the form
-            document.getElementById('contact-success').scrollIntoView({ behavior: 'smooth' });
+            
+            // Hide the form if it's the new modern form
+            if (contactForm) {
+                contactForm.style.display = 'none';
+            }
+            
+            // Scroll to the success message
+            successDiv.scrollIntoView({ behavior: 'smooth' });
+            
+            // Auto-hide after 8 seconds and restore form
+            setTimeout(() => {
+                successDiv.style.display = 'none';
+                if (contactForm) {
+                    contactForm.style.display = 'flex';
+                }
+                // Remove the success parameter from URL
+                window.history.replaceState({}, document.title, window.location.pathname);
+            }, 8000);
         }
     }
+});
+
+// Careers page functionality
+document.addEventListener('DOMContentLoaded', function() {
+    // Save job functionality
+    const saveJobButtons = document.querySelectorAll('.save-job');
+    
+    saveJobButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const icon = this.querySelector('i');
+            const isBookmarked = icon.classList.contains('fas');
+            
+            if (isBookmarked) {
+                icon.classList.remove('fas');
+                icon.classList.add('far');
+                this.style.background = '#f8f9fa';
+                this.style.borderColor = '#e0e0e0';
+                this.style.color = '#666';
+                this.title = 'Save Job';
+            } else {
+                icon.classList.remove('far');
+                icon.classList.add('fas');
+                this.style.background = 'rgba(139, 195, 74, 0.1)';
+                this.style.borderColor = '#4caf50';
+                this.style.color = '#4caf50';
+                this.title = 'Job Saved';
+            }
+        });
+    });
 });
 
 // Enhanced Dropdown functionality for Services menu
@@ -419,7 +467,7 @@ document.querySelectorAll('.contact-item p').forEach(p => {
     p.style.cursor = 'pointer';
 });
 
-console.log('Texas2Success website loaded successfully! 🚀');
+console.log('Texas to Success website loaded successfully! 🚀');
 
 // Hero Slider
 document.addEventListener('DOMContentLoaded', function() {
