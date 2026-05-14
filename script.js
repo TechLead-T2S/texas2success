@@ -4,6 +4,35 @@ const navMenu = document.querySelector('.nav-menu');
 const navBackdrop = document.querySelector('.nav-backdrop');
 const isHomePage = document.body.classList.contains('homepage');
 
+// Intro logo animation (shows before page interaction)
+document.addEventListener('DOMContentLoaded', () => {
+    const introOverlay = document.createElement('div');
+    introOverlay.className = 'intro-overlay';
+    introOverlay.innerHTML = `
+        <div class="intro-content">
+            <img src="images/full_t2s-logo-removebg.png" alt="Texas 2 Success" class="intro-logo">
+        </div>
+    `;
+
+    document.body.classList.add('intro-active');
+    document.body.appendChild(introOverlay);
+
+    // Trigger CSS transition state
+    requestAnimationFrame(() => {
+        introOverlay.classList.add('show');
+    });
+
+    // Fade out and reveal page
+    setTimeout(() => {
+        introOverlay.classList.add('fade-out');
+    }, 3200);
+
+    setTimeout(() => {
+        introOverlay.remove();
+        document.body.classList.remove('intro-active');
+    }, 4000);
+});
+
 if (navToggle) {
     navToggle.addEventListener('click', () => {
         navToggle.classList.toggle('active');
@@ -75,6 +104,15 @@ document.querySelectorAll('.nav-link').forEach(n => n.addEventListener('click', 
         }
     }
 }));
+
+// Bulletin RSVP link fallback
+document.addEventListener('click', (e) => {
+    const bulletinLink = e.target.closest('.bulletin-link');
+    if (bulletinLink) {
+        e.preventDefault();
+        window.location.href = bulletinLink.getAttribute('href');
+    }
+});
 
 // Close menu when clicking outside or on backdrop
 document.addEventListener('click', (e) => {
